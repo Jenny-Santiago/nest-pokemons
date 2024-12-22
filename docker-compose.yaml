@@ -1,0 +1,13 @@
+
+version: '3' #Especifica la version del formato de docker compose que se esta utilizando
+
+services: # Aqui se define todos los contenedores que se necesitan para la app, cada contenedor es considerado un servicio
+  db: # Nombre del servicio
+    image: mongo:5 # Especifica la imagen de Docker que se usará para crear el contenedor, mongo por defecto usa la v mas reciente
+    restart: always # Configura el comportamiento del contenedor en caso de que se detenga
+    ports:
+      - 27017:27017
+    environment: 
+      MONGODB_DATABASE: nest-pokemon
+    volumes:
+      - ./mongo:/data/db

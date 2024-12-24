@@ -6,7 +6,7 @@ import { Document } from "mongoose";
 
 @Schema()
 export class Pokemon extends Document {
-
+    
     // id: string ==== MONGO YA ME LO DA
 
     @Prop({

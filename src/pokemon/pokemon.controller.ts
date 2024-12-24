@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { PaginationDto } from 'src/common/dto/pagination.dt';
 import { ParseMongoPipe } from 'src/common/pipes/parse-mongo/parse-mongo.pipe';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
@@ -14,9 +15,9 @@ export class PokemonController {
     return this.pokemonService.create(createPokemonDto);
   }
 
-  @Get()
-  findAll() {
-    return this.pokemonService.findAll();
+  @Get() // esos queryParameters obtiene los parametros de la url ?limit=20&offset=10
+  findAll(@Query() queryParameters: PaginationDto) {
+    return this.pokemonService.findAll(queryParameters);
   }
 
   @Get(':term')

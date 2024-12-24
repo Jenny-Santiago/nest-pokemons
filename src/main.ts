@@ -11,9 +11,13 @@ async function bootstrap() {
   // Definimos la validacion global
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, // Elimina las propiedades extras de la data
-    forbidNonWhitelisted: true // Lanza un error cuando se agregan propiedades extras al DTO
+    forbidNonWhitelisted: true, // Lanza un error cuando se agregan propiedades extras al DTO
+    transform: true, // Tranforma la informacion que pasa por los DTO
+    transformOptions: {
+      enableImplicitConversion: true
+    }
   }));
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT); // ?? 3000
 }
 bootstrap();

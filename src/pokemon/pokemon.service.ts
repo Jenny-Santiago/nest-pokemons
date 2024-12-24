@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
+import { PaginationDto } from '../common/dto/pagination.dt';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
@@ -8,10 +10,18 @@ import { Pokemon } from './entities/pokemon.entity';
 @Injectable()
 export class PokemonService {
 
+  private defaultLimit: number;
+
+  // El ConfigService solo estara disponible si el modulo ha importado el ConfigModule
   constructor(
     @InjectModel(Pokemon.name) // Tenemos que indiar que puede ser inyectado
-    private readonly pokemonModel: Model<Pokemon>
-  ) { }
+    private readonly pokemonModel: Model<Pokemon>,
+    private readonly configService: ConfigService
+  ) {
+    // Inicializamos el limite por defecto
+    this.defaultLimit = this.configService.get<number>('defaultLimit');
+    console.log(this.defaultLimit);
+  }
 
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLowerCase();
@@ -30,8 +40,15 @@ export class PokemonService {
     }
   }
 
-  findAll() {
-    return `This action returns all pokemon`;
+  findAll(paginationDto: PaginationDto) {
+    const { limit = this.defaultLimit, offset = 0 } = paginationDto;
+    return this.pokemonModel.find()// Obtiene todos los elementos si no se le especifica nada
+      .limit(limit)
+      .skip(offset)
+      .sort({
+        no: 1 // Indica que ordena de manera ascendente la columna de no
+      })
+      .select('-__v'); // Eliminamos el campo __v de la respuesta
   }
 
   async findOne(term: string) {
